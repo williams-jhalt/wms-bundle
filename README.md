@@ -65,8 +65,10 @@ Usage
 
 Create a service as follows:
 
+```yml
 services:
-// ...
+# ...
     wms:
         class: Williams\WmsBundle\Service\WmsService
         arguments: [ "%wsdl_url%", "%username%", "%password%" ] 
+```
