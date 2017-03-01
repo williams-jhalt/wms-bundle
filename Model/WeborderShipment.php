@@ -86,7 +86,7 @@ class WeborderShipment {
         return $this->problemDate;
     }
 
-    public function setShippingDate(DateTime $shippingDate) {
+    public function setShippingDate($shippingDate) {
         $this->shippingDate = $shippingDate;
         return $this;
     }

@@ -451,7 +451,7 @@ class Weborder {
         return $this;
     }
 
-    public function setBillingDate(DateTime $billingDate) {
+    public function setBillingDate($billingDate) {
         $this->billingDate = $billingDate;
         return $this;
     }
@@ -471,7 +471,7 @@ class Weborder {
         return $this;
     }
 
-    public function setChangedOn(DateTime $changedOn) {
+    public function setChangedOn($changedOn) {
         $this->changedOn = $changedOn;
         return $this;
     }
