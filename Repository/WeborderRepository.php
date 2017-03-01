@@ -4,9 +4,9 @@ namespace Williams\WmsBundle\Repository;
 
 use DateTime;
 use SoapClient;
-use Williams\WmsBundle\Weborder\Weborder;
-use Williams\WmsBundle\Weborder\WeborderItem;
-use Williams\WmsBundle\Weborder\WeborderShipment;
+use Williams\WmsBundle\Model\Weborder;
+use Williams\WmsBundle\Model\WeborderItem;
+use Williams\WmsBundle\Model\WeborderShipment;
 
 class WeborderRepository {
 

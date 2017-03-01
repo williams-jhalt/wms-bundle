@@ -1,6 +1,6 @@
 <?php
 
-namespace Williams\WmsBundle\Weborder;
+namespace Williams\WmsBundle\Model;
 
 use DateTime;
 
