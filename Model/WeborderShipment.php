@@ -121,7 +121,7 @@ class WeborderShipment {
         return $this;
     }
 
-    public function setProblemDate(DateTime $problemDate) {
+    public function setProblemDate($problemDate) {
         $this->problemDate = $problemDate;
         return $this;
     }
