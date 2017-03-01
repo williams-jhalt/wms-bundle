@@ -9,25 +9,48 @@ use Williams\WmsBundle\Weborder\WeborderItem;
 use Williams\WmsBundle\Weborder\WeborderShipment;
 
 class WeborderRepository {
-    
+
     /**
      *
      * @var SoapClient
      */
     private $client;
-    
+
     public function __construct(SoapClient $client) {
         $this->client = $client;
     }
-    
+
     public function getOrder($id) {
-        
+
         $order = $this->client->getOrder($id);
-        
-        $billingDate = ($order->billingDate != null) ? new DateTime($order->billingDate) : null;
-        
+
         $weborder = new Weborder();
+
+        return $this->loadOrderFromWms($weborder, $order);
+    }
+    
+    public function getNewOrders() {
         
+        $newOrders = $this->client->getNewOrders();
+        
+        $result = array();
+        
+        foreach ($newOrders as $order) {
+            
+            $weborder = new Weborder();
+            
+            $result[] = loadOrderFromWms($weborder, $order);
+            
+        }
+        
+        return $result;
+        
+    }
+
+    private function loadOrderFromWms(Weborder $weborder, $order) {
+
+        $billingDate = ($order->billingDate != null) ? new DateTime($order->billingDate) : null;
+
         $weborder->setOrderNumber($order->orderNumber)
                 ->setReference($order->reference)
                 ->setReference2($order->reference2)
@@ -68,9 +91,9 @@ class WeborderRepository {
                 ->setBillToFax($order->billToFax)
                 ->setBillToEmail($order->billToEmail)
                 ->setShipViaCode($order->shipViaCode);
-        
+
         $items = array();
-        
+
         foreach ($order->items as $item) {
             $t = new WeborderItem();
             $t->setSku($item->sku)
@@ -80,16 +103,16 @@ class WeborderRepository {
                     ->setShipped($item->shipped);
             $items[] = $t;
         }
-        
+
         $weborder->setItems($items);
-        
+
         $shipments = array();
-        
+
         foreach ($order->shipments as $shipment) {
-            
+
             $shippingDate = $shipment->shippingDate != null ? new DateTime($shipment->shippingDate) : null;
             $problemDate = $shipment->problemDate != null ? new DateTime($shipment->problemDate) : null;
-            
+
             $t = new WeborderShipment();
             $t->setShippingDate($shippingDate)
                     ->setTrackingNumber($shipment->trackingNumber)
@@ -99,14 +122,13 @@ class WeborderRepository {
                     ->setShippingMethodService($shipment->shippingMethodService)
                     ->setShipper($shipment->shipper)
                     ->setProblemDate($problemDate);
-            
+
             $shipments[] = $t;
         }
-        
+
         $weborder->setShipments($shipments);
-        
+
         return $weborder;
-        
     }
-    
+
 }
