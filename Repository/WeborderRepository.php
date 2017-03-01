@@ -35,7 +35,7 @@ class WeborderRepository {
         
         $result = array();
         
-        foreach($newOrders->item as $id) {
+        foreach($newOrders as $id) {
             $order = $this->client->getOrder($id);
             $weborder = new Weborder();
             $result[] = $this->loadOrderFromWms($weborder, $order);
