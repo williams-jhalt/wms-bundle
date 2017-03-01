@@ -9,7 +9,7 @@ class WmsService {
     private $client;
     
     public function __construct($wsdl, $username, $password) {
-        $this->client = new SoapClient($wsdl, [
+        $this->client = new \SoapClient($wsdl, [
             'soap_version' => SOAP_1_2,
             'login' => $username,
             'password' => $password
