@@ -20,6 +20,11 @@ class WeborderRepository {
         $this->client = $client;
     }
 
+    /**
+     * 
+     * @param string $id
+     * @return Weborder
+     */
     public function getOrder($id) {
 
         $order = $this->client->getOrder($id);
@@ -29,6 +34,12 @@ class WeborderRepository {
         return $this->loadOrderFromWms($weborder, $order);
     }
     
+    /**
+     * 
+     * @param DateTime $startDate
+     * @param DateTime $endDate
+     * @return Weborder[]
+     */
     public function findByOrderDate(DateTime $startDate, DateTime $endDate) {
         
         $ids = $this->client->findByOrderDate($startDate->format('c'), $endDate->format('c'));
@@ -45,6 +56,10 @@ class WeborderRepository {
         
     }
     
+    /**
+     * 
+     * @return Weborder[]
+     */
     public function getNewOrders() {
         
         $newOrders = $this->client->getNewOrders();
@@ -60,21 +75,29 @@ class WeborderRepository {
         return $result;
         
     }
-
+    
+    /**
+     * 
+     * @param Weborder $weborder
+     * @param stdClass $order
+     * @return Weborder
+     */
     private function loadOrderFromWms(Weborder $weborder, $order) {
 
-        $billingDate = ($order->billingDate != null) ? new DateTime($order->billingDate) : null;
+        $billingDate = ($order->billingDate != null) ? DateTime::createFromFormat('c', $order->billingDate) : null;
+        $orderDate = ($order->orderDate != null) ? DateTime::createFromFormat('c', $order->orderDate) : null;
+        $changedOn = ($order->changedOn != null) ? DateTime::createFromFormat('c', $order->changedOn) : null;
 
         $weborder->setOrderNumber($order->orderNumber)
                 ->setReference($order->reference)
                 ->setReference2($order->reference2)
                 ->setReference3($order->reference3)
-                ->setOrderDate(new DateTime($order->orderDate))
+                ->setOrderDate($orderDate)
                 ->setBillingDate($billingDate)
                 ->setInvoiceNumber($order->invoiceNumber)
                 ->setCombinedInvoiceNumber($order->combinedInvoiceNumber)
                 ->setNotes($order->notes)
-                ->setChangedOn(new DateTime($order->changedOn))
+                ->setChangedOn($changedOn)
                 ->setOrderShipped($order->orderShipped)
                 ->setOrderProblem($order->orderProblem)
                 ->setOrderCanceled($order->orderCanceled)
@@ -124,8 +147,8 @@ class WeborderRepository {
 
         foreach ($order->shipments as $shipment) {
 
-            $shippingDate = $shipment->shippingDate != null ? new DateTime($shipment->shippingDate) : null;
-            $problemDate = $shipment->problemDate != null ? new DateTime($shipment->problemDate) : null;
+            $shippingDate = $shipment->shippingDate != null ? DateTime::createFromFormat('c', $shipment->shippingDate) : null;
+            $problemDate = $shipment->problemDate != null ? DateTime::createFromFormat('c', $shipment->problemDate) : null;
 
             $t = new WeborderShipment();
             $t->setShippingDate($shippingDate)
