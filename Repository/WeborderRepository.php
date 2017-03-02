@@ -29,6 +29,22 @@ class WeborderRepository {
         return $this->loadOrderFromWms($weborder, $order);
     }
     
+    public function findByOrderDate(DateTime $startDate, DateTime $endDate) {
+        
+        $ids = $this->client->findByOrderDate($startDate->format('c'), $endDate->format('c'));
+        
+        $result = array();
+        
+        foreach ($ids as $id) {
+            $order = $this->client->getOrder($id);
+            $weborder = new Weborder();
+            $result[] = $this->loadOrderFromWms($weborder, $order);            
+        }
+        
+        return $result;
+        
+    }
+    
     public function getNewOrders() {
         
         $newOrders = $this->client->getNewOrders();
