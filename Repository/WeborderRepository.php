@@ -33,7 +33,7 @@ class WeborderRepository {
 
         return $this->loadOrderFromWms($weborder, $order);
     }
-    
+
     /**
      * 
      * @param DateTime $startDate
@@ -41,41 +41,39 @@ class WeborderRepository {
      * @return Weborder[]
      */
     public function findByOrderDate(DateTime $startDate, DateTime $endDate) {
-        
+
         $ids = $this->client->findByOrderDate($startDate->format('c'), $endDate->format('c'));
-        
+
         $result = array();
-        
+
         foreach ($ids as $id) {
             $order = $this->client->getOrder($id);
             $weborder = new Weborder();
-            $result[] = $this->loadOrderFromWms($weborder, $order);            
+            $result[] = $this->loadOrderFromWms($weborder, $order);
         }
-        
+
         return $result;
-        
     }
-    
+
     /**
      * 
      * @return Weborder[]
      */
     public function getNewOrders() {
-        
+
         $newOrders = $this->client->getNewOrders();
-        
+
         $result = array();
-        
-        foreach($newOrders as $id) {
+
+        foreach ($newOrders as $id) {
             $order = $this->client->getOrder($id);
             $weborder = new Weborder();
             $result[] = $this->loadOrderFromWms($weborder, $order);
         }
-        
+
         return $result;
-        
     }
-    
+
     /**
      * 
      * @param Weborder $weborder
@@ -84,20 +82,25 @@ class WeborderRepository {
      */
     private function loadOrderFromWms(Weborder $weborder, $order) {
 
-        $billingDate = ($order->billingDate != null) ? DateTime::createFromFormat('c', $order->billingDate) : null;
-        $orderDate = ($order->orderDate != null) ? DateTime::createFromFormat('c', $order->orderDate) : null;
-        $changedOn = ($order->changedOn != null) ? DateTime::createFromFormat('c', $order->changedOn) : null;
+        if (($billingDate = DateTime::createFromFormat('c', $order->billingDate)) !== false) {
+            $weborder->setBillingDate($billingDate);
+        }
+
+        if (($orderDate = DateTime::createFromFormat('c', $order->orderDate)) !== false) {
+            $weborder->setOrderDate($orderDate);
+        }
+
+        if (($changedOn = DateTime::createFromFormat('c', $order->changedOn)) !== false) {
+            $weborder->setChangedOn($changedOn);
+        }
 
         $weborder->setOrderNumber($order->orderNumber)
                 ->setReference($order->reference)
                 ->setReference2($order->reference2)
                 ->setReference3($order->reference3)
-                ->setOrderDate($orderDate)
-                ->setBillingDate($billingDate)
                 ->setInvoiceNumber($order->invoiceNumber)
                 ->setCombinedInvoiceNumber($order->combinedInvoiceNumber)
                 ->setNotes($order->notes)
-                ->setChangedOn($changedOn)
                 ->setOrderShipped($order->orderShipped)
                 ->setOrderProblem($order->orderProblem)
                 ->setOrderCanceled($order->orderCanceled)
@@ -147,18 +150,22 @@ class WeborderRepository {
 
         foreach ($order->shipments as $shipment) {
 
-            $shippingDate = $shipment->shippingDate != null ? DateTime::createFromFormat('c', $shipment->shippingDate) : null;
-            $problemDate = $shipment->problemDate != null ? DateTime::createFromFormat('c', $shipment->problemDate) : null;
-
             $t = new WeborderShipment();
-            $t->setShippingDate($shippingDate)
-                    ->setTrackingNumber($shipment->trackingNumber)
+
+            if (($shippingDate = DateTime::createFromFormat('c', $shipment->shippingDate)) !== false) {
+                $t->setShippingDate($shippingDate);
+            }
+
+            if (($problemDate = DateTime::createFromFormat('c', $shipment->problemDate)) !== false) {
+                $t->setProblemDate($problemDate);
+            }
+
+            $t->setTrackingNumber($shipment->trackingNumber)
                     ->setShippingCost($shipment->shippingCost)
                     ->setShippingNotes($shipment->shippingNotes)
                     ->setShippingMethod($shipment->shippingMethod)
                     ->setShippingMethodService($shipment->shippingMethodService)
-                    ->setShipper($shipment->shipper)
-                    ->setProblemDate($problemDate);
+                    ->setShipper($shipment->shipper);
 
             $shipments[] = $t;
         }
