@@ -82,15 +82,15 @@ class WeborderRepository {
      */
     private function loadOrderFromWms(Weborder $weborder, $order) {
 
-        if (($billingDate = DateTime::createFromFormat('c', $order->billingDate)) !== false) {
+        if (($billingDate = DateTime::createFromFormat('Y-m-d\TH:i:sO', $order->billingDate)) !== false) {
             $weborder->setBillingDate($billingDate);
         }
 
-        if (($orderDate = DateTime::createFromFormat('c', $order->orderDate)) !== false) {
+        if (($orderDate = DateTime::createFromFormat('Y-m-d\TH:i:sO', $order->orderDate)) !== false) {
             $weborder->setOrderDate($orderDate);
         }
 
-        if (($changedOn = DateTime::createFromFormat('c', $order->changedOn)) !== false) {
+        if (($changedOn = DateTime::createFromFormat('Y-m-d\TH:i:sO', $order->changedOn)) !== false) {
             $weborder->setChangedOn($changedOn);
         }
 
@@ -152,11 +152,11 @@ class WeborderRepository {
 
             $t = new WeborderShipment();
 
-            if (($shippingDate = DateTime::createFromFormat('c', $shipment->shippingDate)) !== false) {
+            if (($shippingDate = DateTime::createFromFormat('Y-m-d\TH:i:sO', $shipment->shippingDate)) !== false) {
                 $t->setShippingDate($shippingDate);
             }
 
-            if (($problemDate = DateTime::createFromFormat('c', $shipment->problemDate)) !== false) {
+            if (($problemDate = DateTime::createFromFormat('Y-m-d\TH:i:sO', $shipment->problemDate)) !== false) {
                 $t->setProblemDate($problemDate);
             }
 
