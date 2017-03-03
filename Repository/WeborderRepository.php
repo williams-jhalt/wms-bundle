@@ -34,7 +34,6 @@ class WeborderRepository {
         $weborder = new Weborder();
 
         return $this->loadOrderFromWms($weborder, $order);
-        
     }
 
     /**
@@ -50,13 +49,12 @@ class WeborderRepository {
         $result = array();
 
         foreach ($ids as $id) {
-            $weborder = new Weborder();
             try {
+                $weborder = new Weborder();
                 $order = $this->client->getOrder($id);
                 $result[] = $this->loadOrderFromWms($weborder, $order);
             } catch (Exception $e) {
-                $weborder->setOrderNumber($id);
-                $result[] = $weborder->setNotes("COULD NOT RETRIEVE FROM WMS: " . $e->getMessage());
+                continue;
             }
         }
 
@@ -74,13 +72,12 @@ class WeborderRepository {
         $result = array();
 
         foreach ($newOrders as $id) {
-            $weborder = new Weborder();
             try {
+                $weborder = new Weborder();
                 $order = $this->client->getOrder($id);
                 $result[] = $this->loadOrderFromWms($weborder, $order);
             } catch (Exception $e) {
-                $weborder->setOrderNumber($id);
-                $result[] = $weborder->setNotes("COULD NOT RETRIEVE FROM WMS: " . $e->getMessage());
+                continue;
             }
         }
 
