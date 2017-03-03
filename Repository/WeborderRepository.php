@@ -3,7 +3,9 @@
 namespace Williams\WmsBundle\Repository;
 
 use DateTime;
+use Exception;
 use SoapClient;
+use stdClass;
 use Williams\WmsBundle\Model\Weborder;
 use Williams\WmsBundle\Model\WeborderItem;
 use Williams\WmsBundle\Model\WeborderShipment;
@@ -32,6 +34,7 @@ class WeborderRepository {
         $weborder = new Weborder();
 
         return $this->loadOrderFromWms($weborder, $order);
+        
     }
 
     /**
@@ -47,9 +50,14 @@ class WeborderRepository {
         $result = array();
 
         foreach ($ids as $id) {
-            $order = $this->client->getOrder($id);
             $weborder = new Weborder();
-            $result[] = $this->loadOrderFromWms($weborder, $order);
+            try {
+                $order = $this->client->getOrder($id);
+                $result[] = $this->loadOrderFromWms($weborder, $order);
+            } catch (Exception $e) {
+                $weborder->setOrderNumber($id);
+                $result[] = $weborder->setNotes("COULD NOT RETRIEVE FROM WMS: " . $e->getMessage());
+            }
         }
 
         return $result;
@@ -66,9 +74,14 @@ class WeborderRepository {
         $result = array();
 
         foreach ($newOrders as $id) {
-            $order = $this->client->getOrder($id);
             $weborder = new Weborder();
-            $result[] = $this->loadOrderFromWms($weborder, $order);
+            try {
+                $order = $this->client->getOrder($id);
+                $result[] = $this->loadOrderFromWms($weborder, $order);
+            } catch (Exception $e) {
+                $weborder->setOrderNumber($id);
+                $result[] = $weborder->setNotes("COULD NOT RETRIEVE FROM WMS: " . $e->getMessage());
+            }
         }
 
         return $result;
