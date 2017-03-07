@@ -44,19 +44,22 @@ class WeborderRepository {
      */
     public function findByOrderDate(DateTime $startDate, DateTime $endDate) {
 
-        $ids = $this->client->findByOrderDate($startDate->format('c'), $endDate->format('c'));
+        $limit = 100;
+        $offset = 0;
 
-        $result = array();
+        do {
 
-        foreach ($ids as $id) {
-            try {
+            $orders = $this->client->findOrdersByOrderDate($startDate->format('c'), $endDate->format('c'), $limit, $offset);
+
+            $result = array();
+
+            foreach ($orders as $order) {
                 $weborder = new Weborder();
-                $order = $this->client->getOrder($id);
                 $result[] = $this->loadOrderFromWms($weborder, $order);
-            } catch (Exception $e) {
-                continue;
             }
-        }
+            
+            $offset += $limit;
+        } while (count($orders) > 0);
 
         return $result;
     }
