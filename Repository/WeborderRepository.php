@@ -47,17 +47,17 @@ class WeborderRepository {
         $limit = 500;
         $offset = 0;
 
+        $result = array();
+
         do {
 
             $orders = $this->client->findOrdersByOrderDate($startDate->format('c'), $endDate->format('c'), $limit, $offset);
-
-            $result = array();
 
             foreach ($orders as $order) {
                 $weborder = new Weborder();
                 $result[] = $this->loadOrderFromWms($weborder, $order);
             }
-            
+
             $offset += $limit;
         } while (count($orders) > 0);
 
